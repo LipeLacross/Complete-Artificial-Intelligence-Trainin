@@ -205,15 +205,5 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
-/4.Tópicos Avançados de Machine Learning/
-/5.Redes Neurais, Deep Learning e Computer Vision/
-/6.Machine Learning Explicável/
-/7.Processamento de Linguagem Natura/
-/8.LLMs e Inteligência Artificial generativa/
-/9.Agentes de IA/
-/10.Detecção de Anomalias/
-/11.Algoritmos Genéticos/
-/12.Algoritmos de Busca e Otimização/
-/13.Lógica Difusa/
-/14.Projeto Final/
+
 .idea
