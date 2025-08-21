@@ -8,7 +8,10 @@
   |-- validation.csv
 |-- desafio.pdf
 |-- reports
+  |-- classification_report.txt
+  |-- confusion_matrix.png
   |-- model_selection.txt
+  |-- test_metrics.json
   |-- tuning_history.json
   |-- validation_metrics.json
 |-- requirements.txt

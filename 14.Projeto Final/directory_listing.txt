@@ -8,7 +8,10 @@
   |-- validation.csv
 |-- desafio.pdf
 |-- reports/
+  |-- classification_report.txt
+  |-- confusion_matrix.png
   |-- model_selection.txt
+  |-- test_metrics.json
   |-- tuning_history.json
   |-- validation_metrics.json
 |-- requirements.txt
@@ -30,13 +33,19 @@ File contents:
   |-- validation.csv
 |-- desafio.pdf
 |-- reports/
+  |-- classification_report.txt
+  |-- confusion_matrix.png
   |-- model_selection.txt
+  |-- test_metrics.json
   |-- tuning_history.json
   |-- validation_metrics.json
 |-- requirements.txt
   Content:
     pandas>=2.2.2
-    numpy>=1.26.4
+    numpy>=2.2.0
+    numba==0.60.0
+    llvmlite==0.43.*
+    shap==0.48.0
     scikit-learn>=1.5.1
     imbalanced-learn>=0.12.3
     optuna>=3.6.1
@@ -45,7 +54,6 @@ File contents:
     catboost>=1.2.5
     matplotlib>=3.9.0
     plotly>=5.23.0
-    shap>=0.46.0
     joblib>=1.4.2
 |-- src/
   |-- evaluate.py
@@ -368,6 +376,8 @@ File contents:
       import warnings
       from typing import Dict, List, Tuple, Optional
       
+      from sklearn.feature_selection import SelectFromModel
+      from sklearn.linear_model import LogisticRegression
       import joblib
       import numpy as np
       import pandas as pd
@@ -560,17 +570,24 @@ File contents:
       
       def make_training_pipeline(preprocessor: ColumnTransformer, model) -> ImbPipeline:
           """
-          Inclui SMOTE no treino e **wrap** do estimador para lidar com y 0/1 internamente.
+          Pré -> Seleção de atributos (L1) -> SMOTE -> Modelo
           """
-          wrapped = LabelEncodedClassifier(model)
+          selector = SelectFromModel(
+              LogisticRegression(penalty="l1", solver="liblinear", max_iter=1000, class_weight="balanced"),
+              max_features=80,   # ajuste opcional
+              threshold="median"
+          )
+      
           pipe = ImbPipeline(
               steps=[
                   ("pre", preprocessor),
+                  ("fs", selector),
                   ("smote", SMOTE(random_state=42)),
-                  ("clf", wrapped),
+                  ("clf", LabelEncodedClassifier(model)),
               ]
           )
           return pipe
+      
       
       
       # -------------------------
